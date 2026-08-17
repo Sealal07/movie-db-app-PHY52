@@ -3,17 +3,17 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_db
 from app.models.review import Review 
 from app.schemas.review import ReviewRead
-from app.api.deps import get_db
 from app.services import tmdb
 
 
 router = APIRouter()
 
-
+# GET /api/movies
 @router.get('/')
 def get_movies(page: int = Query(1, ge=1)):
     return tmdb.get_popular_movies(page=page)
 
+# GET /api/movies/{movie_id}
 @router.get('/{movie_id}')
 def get_movie_detail(movie_id: int, db: Session = Depends):
     details = tmdb.get_movie_details(movie_id)

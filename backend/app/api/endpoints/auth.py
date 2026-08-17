@@ -9,7 +9,7 @@ from app.core.security import get_password_hash, verify_password
 
 router = APIRouter() 
 
-
+# POST /api/auth/register 
 @router.post('/register', response_model=UserRead)
 def register(user_in: UserCreate, db: Session = Depends(get_db)):
     if db.query(User).filter(User.username == user_in.username).first():
@@ -27,7 +27,8 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh()
     return user
-
+    
+# POST /api/auth/login
 @router.post('/login')
 def login(user_in: UserLogin, response: Response, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == user_in.username).first()
@@ -42,13 +43,13 @@ def login(user_in: UserLogin, response: Response, db: Session = Depends(get_db))
     )
     return {"message": 'Успешная авторизация'}
 
-
+# POST /api/auth/logout
 @router.post("/logout")
 def logout(response: Response):
     response.delete_cookie('session_user_id')
     return {'message': 'Успешный выход'}
 
-
+# GET /api/auth/me
 @router.get('/me', response_model=UserRead)
 def get_me(current_user: User = Depends(get_current_user)):
     return current_user
